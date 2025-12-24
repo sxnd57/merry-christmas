@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>Giáng Sinh Lung Linh - Món Quà Tặng Em ❤️</title>
+    <meta
+      name="description"
+      content="Một không gian 3D huyền ảo với cây thông Neon, pháo hoa và những lời chúc ngọt ngào nhất dành tặng người thương. Merry Christmas!"
+    />
+    <meta
+      name="keywords"
+      content="Christmas 3D, Giáng sinh, Three.js, Tặng bạn gái, Web 3D, Neon Tree"
+    />
+    <meta name="author" content="Người Yêu Của Em" />
+    <meta name="theme-color" content="#000000" />
+
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="Giáng Sinh Lung Linh - Món Quà Tặng Em ❤️"
+    />
+    <meta
+      property="og:description"
+      content="Nhấn vào để xem món quà 3D đặc biệt anh làm tặng em nè! 🎄✨"
+    />
+    <meta
+      property="og:image"
+      content="https://images.unsplash.com/photo-1544967082-d9d3fdd01a15?q=80&w=1200&auto=format&fit=crop"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="https://your-website-url.com" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Giáng Sinh Lung Linh - Món Quà Tặng Em ❤️"
+    />
+    <meta
+      name="twitter:description"
+      content="Món quà 3D lung linh với pháo hoa và âm nhạc."
+    />
+    <meta
+      name="twitter:image"
+      content="https://images.unsplash.com/photo-1544967082-d9d3fdd01a15?q=80&w=1200&auto=format&fit=crop"
+    />
+
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎄</text></svg>"
+    />
+    <style>
+      @font-face {
+        font-family: "Bonestay";
+        src: url("./Bonestay.otf") format("truetype");
+      }
+      body {
+        margin: 0;
+        overflow: hidden;
+        background-color: #000000;
+        font-family: "Bonestay", cursive;
+        user-select: none;
+        touch-action: none;
+      }
+
+      /* --- PHẦN TIN NHẮN --- */
+      #message-container {
+        position: absolute;
+        top: 50%;
+        right: 5%;
+        transform: translateY(-50%);
+        width: 45%;
+        height: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        pointer-events: none;
+        z-index: 20;
+      }
+
+      .message-item {
+        color: #fff;
+        line-height: 1.2;
+        text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ff00de,
+          0 0 40px #ff00de;
+        opacity: 0;
+        transition: opacity 1s ease-in-out, transform 1s ease-in-out, filter 1s;
+      }
+
+      .big-title {
+        font-size: 5rem;
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+
+      .wishes-text {
+        font-size: 2.5rem;
+      }
+
+      .hidden {
+        opacity: 0;
+        transform: translateY(20px);
+        filter: blur(5px);
+      }
+      .visible {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+      }
+
+      /* --- NÚT BẬT NHẠC --- */
+      #music-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 0, 222, 0.2);
+        border: 1px solid #ff00de;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        z-index: 50;
+        font-family: sans-serif;
+        font-size: 0.9rem;
+        backdrop-filter: blur(5px);
+        transition: 0.3s;
+        box-shadow: 0 0 10px #ff00de;
+      }
+      #music-btn:hover {
+        background: rgba(255, 0, 222, 0.5);
+      }
+
+      #controls-info {
+        position: absolute;
+        bottom: 10px;
+        width: 100%;
+        text-align: center;
+        color: rgba(255, 0, 221, 0.4);
+        font-family: sans-serif;
+        font-size: 0.7rem;
+        pointer-events: none;
+        z-index: 10;
+      }
+
+      @media (max-width: 768px) {
+        #message-container {
+          width: 60%;
+          right: 0;
+          left: 35%;
+        }
+        .big-title {
+          font-size: 3.5rem;
+        }
+        .wishes-text {
+          font-size: 2rem;
+        }
+        #music-btn {
+          top: 10px;
+          right: 10px;
+          padding: 8px 15px;
+          font-size: 0.8rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button id="music-btn">🎵</button>
+
+    <audio id="bg-music" loop>
+      <source src="./nhac.mp3" type="audio/mpeg" />
+    </audio>
+
+    <div id="message-container">
+      <div class="message-item big-title" id="text-display">
+        Merry Christmas
+      </div>
+    </div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import * as THREE from "three";
+      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+      import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+      import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+      import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+      import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+
+      // --- 1. XỬ LÝ ÂM THANH ---
+      const musicBtn = document.getElementById("music-btn");
+      const audio = document.getElementById("bg-music");
+      audio.volume = 0.2;
+
+      let isPlaying = false;
+      musicBtn.addEventListener("click", () => {
+        if (!isPlaying) {
+          audio
+            .play()
+            .then(() => {
+              isPlaying = true;
+              musicBtn.textContent = "II";
+              musicBtn.style.opacity = "0.5";
+            })
+            .catch((e) => alert("Chạm màn hình lần nữa để phát nhạc."));
+        } else {
+          audio.pause();
+          isPlaying = false;
+          musicBtn.textContent = "🎵";
+          musicBtn.style.opacity = "1";
+        }
+      });
+
+      // --- 2. KỊCH BẢN CHẠY CHỮ ---
+      const messages = [
+        "Bé yêu Giáng sinh vui vẻ nhé!",
+        "Cảm ơn em đã đến bên anh",
+        "Em là món quà tuyệt nhất của anh",
+        "Mùa đông này ấm lắm vì có em",
+        "Mong mọi điều ước của em thành hiện thực",
+        "Và...Yêu anh nhiều nhiều nữa nhé! ❤️",
+      ];
+
+      const textDisplay = document.getElementById("text-display");
+      let msgIndex = 0;
+
+      setTimeout(() => {
+        textDisplay.classList.remove("big-title");
+        textDisplay.classList.add("hidden");
+        setTimeout(() => {
+          textDisplay.classList.remove("hidden");
+          textDisplay.classList.add("visible");
+          textDisplay.classList.add("wishes-text");
+          startMessageLoop();
+        }, 1000);
+      }, 5000);
+
+      function startMessageLoop() {
+        const changeText = () => {
+          textDisplay.classList.remove("visible");
+          textDisplay.classList.add("hidden");
+          setTimeout(() => {
+            textDisplay.innerText = messages[msgIndex];
+            textDisplay.classList.remove("hidden");
+            textDisplay.classList.add("visible");
+            msgIndex = (msgIndex + 1) % messages.length;
+          }, 1000);
+        };
+        changeText();
+        setInterval(changeText, 4000);
+      }
+
+      // --- 3. THREE.JS SCENE ---
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x000000, 0.0015);
+
+      const camera = new THREE.PerspectiveCamera(
+        60,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      camera.position.set(0, 15, 85);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: false });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.toneMapping = THREE.ReinhardToneMapping;
+      renderer.toneMappingExposure = 0.9;
+      document.body.appendChild(renderer.domElement);
+
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.5;
+      controls.maxPolarAngle = Math.PI / 1.8;
+
+      const treeShiftX = -15;
+      controls.target.set(treeShiftX, 10, 0);
+
+      const renderScene = new RenderPass(scene, camera);
+      const bloomPass = new UnrealBloomPass(
+        new THREE.Vector2(window.innerWidth, window.innerHeight),
+        0.5,
+        0.4,
+        0.1
+      );
+      const outputPass = new OutputPass();
+      const composer = new EffectComposer(renderer);
+      composer.addPass(renderScene);
+      composer.addPass(bloomPass);
+      composer.addPass(outputPass);
+
+      function getTexture() {
+        const canvas = document.createElement("canvas");
+        canvas.width = 32;
+        canvas.height = 32;
+        const ctx = canvas.getContext("2d");
+        const grad = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
+        grad.addColorStop(0, "rgba(255,255,255,1)");
+        grad.addColorStop(0.3, "rgba(255,255,255,0.5)");
+        grad.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 32, 32);
+        return new THREE.CanvasTexture(canvas);
+      }
+      const particleImg = getTexture();
+
+      const mainTreeGroup = new THREE.Group();
+      mainTreeGroup.position.set(treeShiftX, 0, 0);
+      scene.add(mainTreeGroup);
+
+      // --- TẠO CÂY THÔNG ---
+      const treeCount = 12000;
+      const treeGeo = new THREE.BufferGeometry();
+      const treePos = [];
+      const treeColors = [];
+      const treeSizes = [];
+      const cPurple = new THREE.Color(0x9900ff);
+      const cPink = new THREE.Color(0xff0066);
+      const cCyan = new THREE.Color(0x00ffff);
+
+      for (let i = 0; i < treeCount; i++) {
+        const h = Math.random();
+        const y = h * 45 - 20;
+        const r = 18 * (1 - h) * Math.sqrt(Math.random());
+        const a = h * 25 + Math.random() * Math.PI * 2;
+        treePos.push(r * Math.cos(a), y, r * Math.sin(a));
+        const c = new THREE.Color();
+        if (h < 0.5) c.copy(cPurple).lerp(cPink, h * 2);
+        else c.copy(cPink).lerp(cCyan, (h - 0.5) * 2);
+        treeColors.push(c.r, c.g, c.b);
+        treeSizes.push(Math.random() * 0.8 + 0.2);
+      }
+      treeGeo.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(treePos, 3)
+      );
+      treeGeo.setAttribute(
+        "color",
+        new THREE.Float32BufferAttribute(treeColors, 3)
+      );
+      treeGeo.setAttribute(
+        "size",
+        new THREE.Float32BufferAttribute(treeSizes, 1)
+      );
+      const treeMat = new THREE.PointsMaterial({
+        size: 1.0,
+        map: particleImg,
+        vertexColors: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        transparent: true,
+        opacity: 0.7,
+      });
+      mainTreeGroup.add(new THREE.Points(treeGeo, treeMat));
+
+      // --- NỀN ---
+      const floorGeo = new THREE.BufferGeometry();
+      const floorPos = [];
+      const floorColors = [];
+      const floorSizes = [];
+      const fCenter = new THREE.Color(0x5500aa);
+      const fEdge = new THREE.Color(0x000022);
+      for (let i = 0; i < 5000; i++) {
+        const r = Math.sqrt(Math.random()) * 100;
+        const t = Math.random() * Math.PI * 2;
+        floorPos.push(
+          r * Math.cos(t),
+          -20 - Math.random() * 2,
+          r * Math.sin(t)
+        );
+        floorSizes.push(Math.random() * 1.5 + 0.5);
+        const c = fCenter.clone().lerp(fEdge, r / 100);
+        if (Math.random() > 0.9) c.addScalar(0.2);
+        floorColors.push(c.r, c.g, c.b);
+      }
+      floorGeo.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(floorPos, 3)
+      );
+      floorGeo.setAttribute(
+        "color",
+        new THREE.Float32BufferAttribute(floorColors, 3)
+      );
+      floorGeo.setAttribute(
+        "size",
+        new THREE.Float32BufferAttribute(floorSizes, 1)
+      );
+      scene.add(new THREE.Points(floorGeo, treeMat.clone()));
+
+      // =========================================
+      // --- TRÁI TIM HẠT Ở ĐỈNH ---
+      // =========================================
+      const heartCount = 800;
+      const heartGeo = new THREE.BufferGeometry();
+      const heartPos = [];
+      const heartColors = [];
+      const heartSizes = [];
+
+      const cHeartPink = new THREE.Color(0xff00de);
+      const cHeartWhite = new THREE.Color(0xffffff);
+
+      for (let i = 0; i < heartCount; i++) {
+        let t = Math.random() * Math.PI * 2;
+        let r = Math.sqrt(Math.random());
+
+        // Công thức trái tim (tạo hình quanh tâm 0,0,0)
+        let x = 16 * Math.pow(Math.sin(t), 3);
+        let y =
+          13 * Math.cos(t) -
+          5 * Math.cos(2 * t) -
+          2 * Math.cos(3 * t) -
+          Math.cos(4 * t);
+        let z = (Math.random() - 0.5) * 6;
+
+        // Áp dụng nhiễu loạn để tạo đám mây
+        x = x * r + (Math.random() - 0.5);
+        y = y * r + (Math.random() - 0.5);
+        z = z * r + (Math.random() - 0.5);
+
+        // Thu nhỏ kích thước, KHÔNG cộng thêm chiều cao ở đây
+        const scale = 0.2;
+        heartPos.push(x * scale, y * scale, z * scale);
+
+        const color = cHeartPink.clone().lerp(cHeartWhite, Math.random() * 0.5);
+        heartColors.push(color.r, color.g, color.b);
+        heartSizes.push(Math.random() * 1.2 + 0.5);
+      }
+
+      heartGeo.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(heartPos, 3)
+      );
+      heartGeo.setAttribute(
+        "color",
+        new THREE.Float32BufferAttribute(heartColors, 3)
+      );
+      heartGeo.setAttribute(
+        "size",
+        new THREE.Float32BufferAttribute(heartSizes, 1)
+      );
+
+      const heartMat = new THREE.PointsMaterial({
+        size: 1.0,
+        map: particleImg,
+        vertexColors: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        transparent: true,
+        opacity: 0.9,
+      });
+
+      const heartMesh = new THREE.Points(heartGeo, heartMat);
+
+      // 1. Xoay lật ngược lại cho đúng chiều
+      // heartMesh.rotation.x = Math.PI;
+      // 2. Đặt vị trí lên đỉnh cây (khoảng y = 26.5)
+      heartMesh.position.y = 28;
+
+      mainTreeGroup.add(heartMesh);
+
+      // Đèn hào quang
+      const light = new THREE.PointLight(0xff00de, 2.5, 40);
+      light.position.y = 25.5;
+      mainTreeGroup.add(light);
+      // =========================================
+
+      const snowGeo = new THREE.BufferGeometry();
+      const snowPos = [];
+      for (let i = 0; i < 1500; i++)
+        snowPos.push(
+          (Math.random() - 0.5) * 200,
+          Math.random() * 100 - 20,
+          (Math.random() - 0.5) * 200
+        );
+      snowGeo.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(snowPos, 3)
+      );
+      const snowMat = new THREE.PointsMaterial({
+        size: 0.6,
+        color: 0xffccff,
+        map: particleImg,
+        transparent: true,
+        opacity: 0.3,
+        blending: THREE.AdditiveBlending,
+      });
+      const snow = new THREE.Points(snowGeo, snowMat);
+      scene.add(snow);
+
+      // --- PHÁO HOA XA (BACKGROUND) ---
+      const fireworks = [];
+      const fwGeoPrototype = new THREE.BufferGeometry();
+      const fwMatPrototype = new THREE.PointsMaterial({
+        size: 1.5,
+        color: 0xffffff,
+        map: particleImg,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        transparent: true,
+        opacity: 1.0,
+      });
+
+      function launchFirework() {
+        const particleCount = 60;
+        const positions = new Float32Array(particleCount * 3);
+        const velocities = [];
+
+        const startZ = -40 - Math.random() * 50;
+        const startX = treeShiftX + (Math.random() - 0.5) * 120;
+        const startY = 20 + Math.random() * 30;
+
+        for (let i = 0; i < particleCount; i++) {
+          positions[i * 3] = startX;
+          positions[i * 3 + 1] = startY;
+          positions[i * 3 + 2] = startZ;
+          const theta = Math.random() * Math.PI * 2;
+          const phi = Math.acos(2 * Math.random() - 1);
+          const speed = 0.3 + Math.random() * 0.4;
+          velocities.push({
+            x: speed * Math.sin(phi) * Math.cos(theta),
+            y: speed * Math.sin(phi) * Math.sin(theta),
+            z: speed * Math.cos(phi),
+          });
+        }
+        const geo = fwGeoPrototype.clone();
+        geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+        const points = new THREE.Points(geo, fwMatPrototype.clone());
+        scene.add(points);
+        fireworks.push({
+          mesh: points,
+          vels: velocities,
+          age: 0,
+          lifespan: 100,
+        });
+      }
+
+      const clock = new THREE.Clock();
+      function animate() {
+        requestAnimationFrame(animate);
+        const t = clock.getElapsedTime();
+        controls.update();
+        const tSizes = treeGeo.attributes.size.array;
+        for (let i = 0; i < treeCount; i++)
+          tSizes[i] = Math.sin(t * 3 + i) * 0.3 + 0.7;
+        treeGeo.attributes.size.needsUpdate = true;
+
+        // --- ANIMATION CHO TRÁI TIM ---
+        heartMesh.rotation.y = t * 0.8; // Xoay vòng
+        const pulse = 1 + Math.sin(t * 3) * 0.1; // Nhịp đập
+        heartMesh.scale.set(pulse, pulse, pulse);
+        // ------------------------------
+
+        const sPos = snowGeo.attributes.position.array;
+        for (let i = 0; i < 1500; i++) {
+          sPos[i * 3 + 1] -= 0.15;
+          if (sPos[i * 3 + 1] < -20) sPos[i * 3 + 1] = 80;
+        }
+        snowGeo.attributes.position.needsUpdate = true;
+
+        if (Math.random() < 0.03) launchFirework();
+
+        for (let i = fireworks.length - 1; i >= 0; i--) {
+          const fw = fireworks[i];
+          fw.age++;
+          const pos = fw.mesh.geometry.attributes.position.array;
+          for (let j = 0; j < fw.vels.length; j++) {
+            pos[j * 3] += fw.vels[j].x;
+            pos[j * 3 + 1] += fw.vels[j].y;
+            pos[j * 3 + 2] += fw.vels[j].z;
+            fw.vels[j].y -= 0.008;
+            fw.vels[j].x *= 0.98;
+            fw.vels[j].z *= 0.98;
+          }
+          fw.mesh.geometry.attributes.position.needsUpdate = true;
+          fw.mesh.material.opacity = 1 - fw.age / fw.lifespan;
+          if (fw.age >= fw.lifespan) {
+            scene.remove(fw.mesh);
+            fw.mesh.geometry.dispose();
+            fw.mesh.material.dispose();
+            fireworks.splice(i, 1);
+          }
+        }
+        composer.render();
+      }
+
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        composer.setSize(window.innerWidth, window.innerHeight);
+      });
+      animate();
+    </script>
+  </body>
+</html>
