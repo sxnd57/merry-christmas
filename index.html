@@ -1,60 +1,23 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" prefix="og: https://ogp.me/ns#">
   <head>
     <meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-
-    <title>Giáng Sinh Lung Linh - Món Quà Tặng Em ❤️</title>
+    <title>Giáng Sinh Lung Linh - Tặng TRANG ❤️</title>
     <meta
       name="description"
-      content="Pháo hoa và những lời chúc ngọt ngào nhất dành tặng người thương. Merry Christmas!"
-    />
-    <meta
-      name="keywords"
-      content="Christmas 3D, Giáng sinh, Three.js, Tặng bạn gái, Web 3D, Neon Tree"
-    />
-    <meta name="author" content="Người Yêu Của Em" />
-    <meta name="theme-color" content="#000000" />
-
-    <meta property="og:type" content="website" />
-    <meta
-      property="og:title"
-      content="Giáng Sinh Lung Linh - Món Quà Tặng Em ❤️"
-    />
-    <meta
-      property="og:description"
-      content="Nhấn vào để xem món quà đặc biệt anh làm tặng em nè! 🎄✨"
+      content="Một không gian 3D huyền ảo dành tặng Trang. Merry Christmas!"
     />
     <meta
       property="og:image"
-      content="https://cdn-i.vtcnews.vn/resize/th/upload/2024/12/23/noel-16461519.png"
-    />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:url" content="http://coem.sxnd.id.nv" />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:title"
-      content="Giáng Sinh Lung Linh - Món Quà Tặng Em ❤️"
-    />
-    <meta
-      name="twitter:description"
-      content="Món quà lung linh với pháo hoa và âm nhạc."
-    />
-    <meta
-      name="twitter:image"
-      content="https://cdn-i.vtcnews.vn/resize/th/upload/2024/12/23/noel-16461519.png"
+      content="https://images.unsplash.com/photo-1544967082-d9d3fdd01a15?q=80&w=1200&auto=format&fit=crop"
     />
 
-    <link
-      rel="icon"
-      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎄</text></svg>"
-    />
     <style>
+      /* CSS giữ nguyên */
       @font-face {
         font-family: "Bonestay";
         src: url("./Bonestay.otf") format("truetype");
@@ -67,8 +30,6 @@
         user-select: none;
         touch-action: none;
       }
-
-      /* --- PHẦN TIN NHẮN --- */
       #message-container {
         position: absolute;
         top: 50%;
@@ -83,7 +44,6 @@
         pointer-events: none;
         z-index: 20;
       }
-
       .message-item {
         color: #fff;
         line-height: 1.2;
@@ -92,18 +52,15 @@
         opacity: 0;
         transition: opacity 1s ease-in-out, transform 1s ease-in-out, filter 1s;
       }
-
       .big-title {
         font-size: 5rem;
         opacity: 1;
         transform: translateY(0);
         filter: blur(0);
       }
-
       .wishes-text {
         font-size: 2.5rem;
       }
-
       .hidden {
         opacity: 0;
         transform: translateY(20px);
@@ -114,8 +71,6 @@
         transform: translateY(0);
         filter: blur(0);
       }
-
-      /* --- NÚT BẬT NHẠC --- */
       #music-btn {
         position: absolute;
         top: 20px;
@@ -136,7 +91,6 @@
       #music-btn:hover {
         background: rgba(255, 0, 222, 0.5);
       }
-
       #controls-info {
         position: absolute;
         bottom: 10px;
@@ -148,7 +102,6 @@
         pointer-events: none;
         z-index: 10;
       }
-
       @media (max-width: 768px) {
         #message-container {
           width: 60%;
@@ -172,7 +125,6 @@
   </head>
   <body>
     <button id="music-btn">🎵</button>
-
     <audio id="bg-music" loop>
       <source src="./nhac.mp3" type="audio/mpeg" />
     </audio>
@@ -199,12 +151,15 @@
       import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
       import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
       import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+      // --- IMPORT MỚI CHO CHỮ 3D ---
+      import { FontLoader } from "three/addons/loaders/FontLoader.js";
+      import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
+      import { MeshSurfaceSampler } from "three/addons/math/MeshSurfaceSampler.js";
 
       // --- 1. XỬ LÝ ÂM THANH ---
       const musicBtn = document.getElementById("music-btn");
       const audio = document.getElementById("bg-music");
-      audio.volume = 0.2;
-
+      audio.volume = 0.4;
       let isPlaying = false;
       musicBtn.addEventListener("click", () => {
         if (!isPlaying) {
@@ -233,10 +188,8 @@
         "Mong mọi điều ước của em thành hiện thực",
         "Và...Yêu anh nhiều nhiều nữa nhé! ❤️",
       ];
-
       const textDisplay = document.getElementById("text-display");
       let msgIndex = 0;
-
       setTimeout(() => {
         textDisplay.classList.remove("big-title");
         textDisplay.classList.add("hidden");
@@ -247,7 +200,6 @@
           startMessageLoop();
         }, 1000);
       }, 5000);
-
       function startMessageLoop() {
         const changeText = () => {
           textDisplay.classList.remove("visible");
@@ -266,7 +218,6 @@
       // --- 3. THREE.JS SCENE ---
       const scene = new THREE.Scene();
       scene.fog = new THREE.FogExp2(0x000000, 0.0015);
-
       const camera = new THREE.PerspectiveCamera(
         60,
         window.innerWidth / window.innerHeight,
@@ -274,20 +225,19 @@
         1000
       );
       camera.position.set(0, 15, 85);
-
       const renderer = new THREE.WebGLRenderer({ antialias: false });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.toneMapping = THREE.ReinhardToneMapping;
       renderer.toneMappingExposure = 0.9;
       document.body.appendChild(renderer.domElement);
-
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
       controls.autoRotate = true;
       controls.autoRotateSpeed = 0.5;
       controls.maxPolarAngle = Math.PI / 1.8;
 
+      // VỊ TRÍ LỆCH CỦA CÂY
       const treeShiftX = -15;
       controls.target.set(treeShiftX, 10, 0);
 
@@ -319,6 +269,7 @@
       }
       const particleImg = getTexture();
 
+      // NHÓM CHÍNH CHỨA CÂY VÀ CHỮ
       const mainTreeGroup = new THREE.Group();
       mainTreeGroup.position.set(treeShiftX, 0, 0);
       scene.add(mainTreeGroup);
@@ -332,7 +283,6 @@
       const cPurple = new THREE.Color(0x9900ff);
       const cPink = new THREE.Color(0xff0066);
       const cCyan = new THREE.Color(0x00ffff);
-
       for (let i = 0; i < treeCount; i++) {
         const h = Math.random();
         const y = h * 45 - 20;
@@ -402,23 +352,17 @@
       );
       scene.add(new THREE.Points(floorGeo, treeMat.clone()));
 
-      // =========================================
-      // --- TRÁI TIM HẠT Ở ĐỈNH ---
-      // =========================================
+      // --- TRÁI TIM ĐỈNH ---
       const heartCount = 800;
       const heartGeo = new THREE.BufferGeometry();
       const heartPos = [];
       const heartColors = [];
       const heartSizes = [];
-
       const cHeartPink = new THREE.Color(0xff00de);
       const cHeartWhite = new THREE.Color(0xffffff);
-
       for (let i = 0; i < heartCount; i++) {
         let t = Math.random() * Math.PI * 2;
         let r = Math.sqrt(Math.random());
-
-        // Công thức trái tim (tạo hình quanh tâm 0,0,0)
         let x = 16 * Math.pow(Math.sin(t), 3);
         let y =
           13 * Math.cos(t) -
@@ -426,21 +370,15 @@
           2 * Math.cos(3 * t) -
           Math.cos(4 * t);
         let z = (Math.random() - 0.5) * 6;
-
-        // Áp dụng nhiễu loạn để tạo đám mây
         x = x * r + (Math.random() - 0.5);
         y = y * r + (Math.random() - 0.5);
         z = z * r + (Math.random() - 0.5);
-
-        // Thu nhỏ kích thước, KHÔNG cộng thêm chiều cao ở đây
-        const scale = 0.2;
+        const scale = 0.18;
         heartPos.push(x * scale, y * scale, z * scale);
-
         const color = cHeartPink.clone().lerp(cHeartWhite, Math.random() * 0.5);
         heartColors.push(color.r, color.g, color.b);
         heartSizes.push(Math.random() * 1.2 + 0.5);
       }
-
       heartGeo.setAttribute(
         "position",
         new THREE.Float32BufferAttribute(heartPos, 3)
@@ -453,7 +391,6 @@
         "size",
         new THREE.Float32BufferAttribute(heartSizes, 1)
       );
-
       const heartMat = new THREE.PointsMaterial({
         size: 1.0,
         map: particleImg,
@@ -463,20 +400,94 @@
         transparent: true,
         opacity: 0.9,
       });
-
       const heartMesh = new THREE.Points(heartGeo, heartMat);
-
-      // 1. Xoay lật ngược lại cho đúng chiều
       // heartMesh.rotation.x = Math.PI;
-      // 2. Đặt vị trí lên đỉnh cây (khoảng y = 26.5)
-      heartMesh.position.y = 28;
-
+      heartMesh.position.y = 27;
       mainTreeGroup.add(heartMesh);
-
-      // Đèn hào quang
       const light = new THREE.PointLight(0xff00de, 2.5, 40);
       light.position.y = 25.5;
       mainTreeGroup.add(light);
+
+      const fontLoader = new FontLoader();
+      // Tải font chữ helvetiker (dạng bold để chữ dày dặn)
+      fontLoader.load(
+        "https://unpkg.com/three@0.160.0/examples/fonts/helvetiker_bold.typeface.json",
+        function (font) {
+          // 1. Tạo hình học cho chữ
+          const textGeo = new TextGeometry("LOVE YOU", {
+            font: font,
+            size: 5, // Kích thước chữ
+            height: 1, // Độ dày chữ
+            curveSegments: 12,
+          });
+          // Căn giữa chữ
+          textGeo.computeBoundingBox();
+          const centerOffset =
+            -0.5 * (textGeo.boundingBox.max.x - textGeo.boundingBox.min.x);
+          textGeo.translate(centerOffset, 0, 0);
+
+          // 2. Dùng MeshSurfaceSampler để lấy mẫu các điểm trên bề mặt chữ
+          // Tạo một mesh tạm thời để sampler hoạt động
+          const textMaterialTemp = new THREE.MeshBasicMaterial();
+          const textMeshTemp = new THREE.Mesh(textGeo, textMaterialTemp);
+          const sampler = new MeshSurfaceSampler(textMeshTemp).build();
+
+          // 3. Tạo hệ thống hạt từ các điểm mẫu
+          const textParticleCount = 2500; // Số lượng hạt cho chữ
+          const textParticlesGeo = new THREE.BufferGeometry();
+          const textPos = [];
+          const textColors = [];
+          const textSizes = [];
+
+          const tempPosition = new THREE.Vector3();
+          const cText = new THREE.Color(0xff00de); // Màu hồng tím neon cho chữ
+
+          for (let i = 0; i < textParticleCount; i++) {
+            sampler.sample(tempPosition); // Lấy 1 điểm ngẫu nhiên trên bề mặt chữ
+            textPos.push(tempPosition.x, tempPosition.y, tempPosition.z);
+
+            // Thêm chút biến thiên màu sắc
+            textColors.push(
+              cText.r,
+              cText.g + (Math.random() - 0.5) * 0.3,
+              cText.b + (Math.random() - 0.5) * 0.3
+            );
+            textSizes.push(Math.random() * 1.0 + 0.5);
+          }
+
+          textParticlesGeo.setAttribute(
+            "position",
+            new THREE.Float32BufferAttribute(textPos, 3)
+          );
+          textParticlesGeo.setAttribute(
+            "color",
+            new THREE.Float32BufferAttribute(textColors, 3)
+          );
+          textParticlesGeo.setAttribute(
+            "size",
+            new THREE.Float32BufferAttribute(textSizes, 1)
+          );
+
+          // Sử dụng lại material hạt neon
+          const textMat = new THREE.PointsMaterial({
+            size: 1.0,
+            map: particleImg,
+            vertexColors: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            transparent: true,
+            opacity: 0.9,
+          });
+
+          const textPoints = new THREE.Points(textParticlesGeo, textMat);
+
+          // Đặt vị trí dưới gốc cây
+          textPoints.position.y = -24;
+
+          // Thêm vào nhóm chính để di chuyển cùng cây
+          mainTreeGroup.add(textPoints);
+        }
+      );
       // =========================================
 
       const snowGeo = new THREE.BufferGeometry();
@@ -502,7 +513,7 @@
       const snow = new THREE.Points(snowGeo, snowMat);
       scene.add(snow);
 
-      // --- PHÁO HOA XA (BACKGROUND) ---
+      // --- PHÁO HOA XA ---
       const fireworks = [];
       const fwGeoPrototype = new THREE.BufferGeometry();
       const fwMatPrototype = new THREE.PointsMaterial({
@@ -514,16 +525,13 @@
         transparent: true,
         opacity: 1.0,
       });
-
       function launchFirework() {
         const particleCount = 60;
         const positions = new Float32Array(particleCount * 3);
         const velocities = [];
-
         const startZ = -40 - Math.random() * 50;
         const startX = treeShiftX + (Math.random() - 0.5) * 120;
         const startY = 20 + Math.random() * 30;
-
         for (let i = 0; i < particleCount; i++) {
           positions[i * 3] = startX;
           positions[i * 3 + 1] = startY;
@@ -559,11 +567,9 @@
           tSizes[i] = Math.sin(t * 3 + i) * 0.3 + 0.7;
         treeGeo.attributes.size.needsUpdate = true;
 
-        // --- ANIMATION CHO TRÁI TIM ---
-        heartMesh.rotation.y = t * 0.8; // Xoay vòng
-        const pulse = 1 + Math.sin(t * 3) * 0.1; // Nhịp đập
+        heartMesh.rotation.y = t * 0.8;
+        const pulse = 1 + Math.sin(t * 3) * 0.1;
         heartMesh.scale.set(pulse, pulse, pulse);
-        // ------------------------------
 
         const sPos = snowGeo.attributes.position.array;
         for (let i = 0; i < 1500; i++) {
@@ -573,7 +579,6 @@
         snowGeo.attributes.position.needsUpdate = true;
 
         if (Math.random() < 0.03) launchFirework();
-
         for (let i = fireworks.length - 1; i >= 0; i--) {
           const fw = fireworks[i];
           fw.age++;
